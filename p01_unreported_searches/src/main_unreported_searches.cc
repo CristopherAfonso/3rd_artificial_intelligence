@@ -35,9 +35,10 @@
  *            cabecera y declarado su include.
  */
 
-#include <iostream>
+#include "../include/main_functions.h"
 
 int main(int argc, char* argv[]) {
+  Usage(argc, argv);
   std::cout << "Hello Easy C++ project!" << std::endl;
   return 0;
 }

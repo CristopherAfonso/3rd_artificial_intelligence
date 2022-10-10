@@ -32,15 +32,34 @@ using std::cerr;
 using std::cout;
 
 /**
+ * @brief Mensaje principal que informa sobre lo que hace el programa por encima
+ *
+ * @param kProgramName Nombre del programa.
+ * @param kHelp Palabra clave para pedir instrucciones específicas al
+ * programa.
+ */
+void MainMessage(const std::string& kProgramName, const std::string& kHelp) {
+  cout << '\n' << kProgramName << ": Programa que recibe un archivo con";
+  cout << "\nextension \".txt\" como primer parámetro, un número entero";
+  cout << "\ncomo segundo parámetro y otro número entero como tercer";
+  cout << "\nparámetro, y dados esos 3 parámetros, el programa los coge y";
+  cout << "\nexpulsa un resultado por pantalla en formato de texto.";
+  cout << "\nPara mas informacion sobre su uso ejecute:";
+  cout << '\n' << kProgramName << ' ' << kHelp << "\n\n";
+}
+
+/**
  * @brief Función que solo muestra un mensaje de ayuda por pantalla cuando se
  * introduce la palabra clave para pedir instrucciones más detalladas sobre
  * como usar el programa.
  *
- * @param kProgramName Es el nombre del actual programa, usado por el mensaje
+ * @param kProgramName Nombre del programa.
+ * @param kHelp Palabra clave para pedir instrucciones específicas al
+ * programa.
  */
 void HelpMessage(const std::string& kProgramName, const std::string& kHelp) {
-  cout << "\n" << kProgramName << " (" << kHelp << ")\n\n";
-  cout << "--help ==> Palabra clave para pedir indicaciones sobre como\n";
+  cout << "\n" << kProgramName << " (" << kHelp << ")\n";
+  cout << kHelp << " ==> Palabra clave para pedir indicaciones sobre como ";
   cout << "usar el programa\n\n";
   cout << "Este programa solo sirve para encontrar el camino más óptimo\n";
   cout << "entre dos nodos de un grafo dados como parámetro al programa\n";
@@ -99,6 +118,56 @@ void WrongNumberOfArguments(const std::string& kProgramName,
 }
 
 /**
+ * @brief esta función evalua un archivo de texto y comprueba si cumple con la
+ * sintaxis requerida por nuestro programa
+ * 
+ * @param input_file archivo de texto que dentro tiene la implementación del
+ * grafo que queremos analizar
+ */
+void CheckingGraphFile(std::ifstream& input_file) {
+  /// En este bloque de código comprobamos que la primera linea del archivo
+  /// tenga únicamente un número entero y sin ceros a la izquierda
+  if (!input_file.eof()) {
+    std::string aux_number_nodes{""};
+    std::getline(input_file, aux_number_nodes);
+    bool aux_space_again{false};
+    bool aux_first_position_chain{true};
+    for (int i{0}; i < int(aux_number_nodes.size()); ++i) {
+      if (aux_number_nodes[i] == ' ') {
+        if (!aux_first_position_chain) aux_space_again = true;
+        continue;
+      }
+      else {
+        if (aux_space_again) {
+          cerr << "\nSolo se acepta un número entero sin ceros a la";
+          cerr << "\nizquierda en la primera linea del archivo del";
+          cerr << "\ngrafo";
+          exit(EXIT_FAILURE);
+        }
+        if (isdigit(aux_number_nodes[i])) {
+          if ((aux_number_nodes[i] == '0') && aux_first_position_chain) {
+            cerr << "\nDebe poner un número entero sin ceros a la";
+            cerr << "\nizquierda, sino no se aceptará el fichero\n\n";
+            exit(EXIT_FAILURE);
+          }
+          if (aux_first_position_chain) aux_first_position_chain = false;
+          continue;
+        } else {
+          cerr << "\nLa primera línea del archivo debe tener un número";
+          cerr << "\nentero y sin ceros a la izquierda\n\n";
+          exit(EXIT_FAILURE);
+        }
+      }
+    }
+  } else {
+    cerr << "\nError al leer el archivo, está vacío, intentelo de nuevo\n\n";
+    exit(EXIT_FAILURE);
+  }
+
+  
+}
+
+/**
  * @brief funcion que comrpueba que los argumentos dados al programa son
  * correctos
  *
@@ -109,13 +178,119 @@ void Usage(const int& argc, char* argv[]) {
   const std::string kProgramName{argv[0]};
   const std::string kHelp{"--help"};
   if (argc != 1) {
-    const std::string kHelpUser{argv[1]};
-    if ((argc == 2) && (kHelp == kHelpUser)) {
+    const std::string kNameFileGraph{argv[1]};
+    if ((argc == 2) && (kHelp == kNameFileGraph)) {
       HelpMessage(kProgramName, kHelp);
       exit(EXIT_SUCCESS);
-    } else {
+    }
+    if (argc != 4) {
       WrongNumberOfArguments(kProgramName, kHelp);
       exit(EXIT_FAILURE);
     }
+
+    std::ifstream input_file;
+    input_file.open(kNameFileGraph, std::ios::in);
+    if (input_file.fail()) {
+      cerr << "\nError al abrir el archivo " << kNameFileGraph << ", ";
+      cerr << "intentelo de nuevo\n\n";
+      exit(EXIT_FAILURE);
+    }
+    CheckingGraphFile(input_file); ///< Comprueba la sintaxis del grafo
+
+    const std::string kNodeInitial{argv[2]};
+    const std::string kNodeFinal{argv[3]};
+    for (int i{0}; i < int(kNodeInitial.size()); ++i) {
+      if (i == 0) {
+        switch (kNodeInitial[i]) {
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case '5':
+          case '6':
+          case '7':
+          case '8':
+          case '9':
+            break;
+
+          default:
+            cerr << "\nDebe introducir un número entero como nodo inicial";
+            cerr << "\ny sin ceros a la izquierda del todo para que el";
+            cerr << "\nprograma lo acepte\n\n";
+            exit(EXIT_FAILURE);
+            break;
+        }
+        continue;
+      }
+      switch (kNodeInitial[i]) {
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+          break;
+
+        default:
+          cerr << "\nDebe introducir un número entero como nodo inicial";
+          cerr << "\ny sin ceros a la izquierda del todo para que el";
+          cerr << "\nprograma lo acepte\n\n";
+          exit(EXIT_FAILURE);
+          break;
+      }
+    }
+    for (int i{0}; i < int(kNodeFinal.size()); ++i) {
+      if (i == 0) {
+        switch (kNodeFinal[i]) {
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case '5':
+          case '6':
+          case '7':
+          case '8':
+          case '9':
+            break;
+
+          default:
+            cerr << "\nDebe introducir un número entero como nodo final";
+            cerr << "\ny sin ceros a la izquierda del todo para que el";
+            cerr << "\nprograma lo acepte\n\n";
+            exit(EXIT_FAILURE);
+            break;
+        }
+        continue;
+      }
+
+      switch (kNodeFinal[i]) {
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+          break;
+
+        default:
+          cerr << "\nDebe introducir un número entero como nodo final";
+          cerr << "\ny sin ceros a la izquierda del todo para que el";
+          cerr << "\nprograma lo acepte\n\n";
+          exit(EXIT_FAILURE);
+          break;
+      }
+    }
+    
+  } else {
+    MainMessage(kProgramName, kHelp);
+    exit(EXIT_SUCCESS);
   }
 }

@@ -26,12 +26,15 @@
  * 09/10/22 - Archivo terminado.
  */
 
-#include <fstream>
 #include <iostream>
+#include <regex>
+#include <fstream>
 #include <string>
 #include <vector>
 
+void MainMessage(const std::string& kProgramName, const std::string& kHelp);
 void HelpMessage(const std::string& kProgramName, const std::string& kHelp);
 void WrongNumberOfArguments(const std::string& kProgramName,
                             const std::string& kHelp);
+void CheckingGraphFile(std::ifstream& input_file);
 void Usage(const int& argc, char* argv[]);
