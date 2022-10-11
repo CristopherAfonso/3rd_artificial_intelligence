@@ -120,51 +120,57 @@ void WrongNumberOfArguments(const std::string& kProgramName,
 /**
  * @brief esta función evalua un archivo de texto y comprueba si cumple con la
  * sintaxis requerida por nuestro programa
- * 
+ *
  * @param input_file archivo de texto que dentro tiene la implementación del
  * grafo que queremos analizar
  */
 void CheckingGraphFile(std::ifstream& input_file) {
-  /// En este bloque de código comprobamos que la primera linea del archivo
-  /// tenga únicamente un número entero y sin ceros a la izquierda
-  if (!input_file.eof()) {
-    std::string aux_number_nodes{""};
-    std::getline(input_file, aux_number_nodes);
-    bool aux_space_again{false};
-    bool aux_first_position_chain{true};
-    for (int i{0}; i < int(aux_number_nodes.size()); ++i) {
-      if (aux_number_nodes[i] == ' ') {
-        if (!aux_first_position_chain) aux_space_again = true;
-        continue;
-      }
-      else {
-        if (aux_space_again) {
-          cerr << "\nSolo se acepta un número entero sin ceros a la";
-          cerr << "\nizquierda en la primera linea del archivo del";
-          cerr << "\ngrafo";
-          exit(EXIT_FAILURE);
-        }
-        if (isdigit(aux_number_nodes[i])) {
-          if ((aux_number_nodes[i] == '0') && aux_first_position_chain) {
-            cerr << "\nDebe poner un número entero sin ceros a la";
-            cerr << "\nizquierda, sino no se aceptará el fichero\n\n";
-            exit(EXIT_FAILURE);
-          }
-          if (aux_first_position_chain) aux_first_position_chain = false;
-          continue;
-        } else {
-          cerr << "\nLa primera línea del archivo debe tener un número";
-          cerr << "\nentero y sin ceros a la izquierda\n\n";
-          exit(EXIT_FAILURE);
-        }
-      }
-    }
-  } else {
+  if (input_file.eof()) {
     cerr << "\nError al leer el archivo, está vacío, intentelo de nuevo\n\n";
     exit(EXIT_FAILURE);
   }
-
-  
+  std::string aux_actual_line{""};
+  bool aux_first_line{true};
+  int aux_number_of_lines_to_read{0};
+  /// En este bloque de código comprobamos que la primera linea del archivo
+  /// tenga únicamente un número entero y sin ceros a la izquierda
+  while (std::getline(input_file, aux_actual_line)) {
+    if (aux_first_line) {
+      aux_first_line = false;
+      if (!std::regex_match(aux_actual_line,
+                            std::regex("^\\s*[2-9][0-9]*\\s*$"))) {
+        cerr << "\nLa primera línea del archivo que contiene el grafo, debe";
+        cerr << "\ntener un número entero positivo (sin el signo '+') mayor";
+        cerr << "\no igual a 2, y además debe estar únicamente ese número en";
+        cerr << "\nla línea, sino se rechazará el archivo, intentelo de nuevo";
+        cerr << "\n\n";
+        exit(EXIT_FAILURE);
+      }
+      for (int i{0}; i < (std::stoi(aux_actual_line) - 1); ++i) {
+        aux_number_of_lines_to_read += i + 1;
+      }
+      continue;
+    }
+    if (!std::regex_match(aux_actual_line,
+                          std::regex("^\\s*(-1|[0-9]+)\\s*$"))) {
+      cerr << "\nHay líneas dentro del archivo que no se ciñen a la sintaxis";
+      cerr << "\nrequerida, recuerde que por cada línea debe haber o un";
+      cerr << "\nun número entero positivo sin el signo \"+\" o un cero si el";
+      cerr << "\ncoste de ese camino es cero, o un \"-1\" si los nodos no";
+      cerr << "\ntienen un camino directo asociado, en este grafo no se";
+      cerr << "\naceptan caminos con costes negativos\n\n";
+      exit(EXIT_FAILURE);
+    }
+    --aux_number_of_lines_to_read;
+    if (aux_number_of_lines_to_read == 0) break;
+  }
+  if (aux_number_of_lines_to_read != 0) {
+    cerr << "\nError al leer el archivo, hay líneas vacías en el archivo que";
+    cerr << "\ndeberían tener un valor o coste positivo o un cero,o un";
+    cerr << "\n\"-1\", pero no deberían estar vacías, rellene las líneas que";
+    cerr << "\nfaltan si quiere que se acepte el archivo con el grafo\n\n";
+    exit(EXIT_FAILURE);
+  }
 }
 
 /**
@@ -195,100 +201,35 @@ void Usage(const int& argc, char* argv[]) {
       cerr << "intentelo de nuevo\n\n";
       exit(EXIT_FAILURE);
     }
-    CheckingGraphFile(input_file); ///< Comprueba la sintaxis del grafo
+    CheckingGraphFile(input_file);  ///< Comprueba la sintaxis del grafo
 
     const std::string kNodeInitial{argv[2]};
     const std::string kNodeFinal{argv[3]};
-    for (int i{0}; i < int(kNodeInitial.size()); ++i) {
-      if (i == 0) {
-        switch (kNodeInitial[i]) {
-          case '1':
-          case '2':
-          case '3':
-          case '4':
-          case '5':
-          case '6':
-          case '7':
-          case '8':
-          case '9':
-            break;
-
-          default:
-            cerr << "\nDebe introducir un número entero como nodo inicial";
-            cerr << "\ny sin ceros a la izquierda del todo para que el";
-            cerr << "\nprograma lo acepte\n\n";
-            exit(EXIT_FAILURE);
-            break;
-        }
-        continue;
-      }
-      switch (kNodeInitial[i]) {
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-          break;
-
-        default:
-          cerr << "\nDebe introducir un número entero como nodo inicial";
-          cerr << "\ny sin ceros a la izquierda del todo para que el";
-          cerr << "\nprograma lo acepte\n\n";
-          exit(EXIT_FAILURE);
-          break;
-      }
+    std::regex pattern_nodes("\\s*[1-9][0-9]*\\s*");
+    if (!std::regex_match(kNodeInitial, pattern_nodes)) {
+      cerr << "\nError, el nodo inicial debe ser un número positivo mayor ";
+      cerr << "que cero\nIntentelo de nuevo\n\n";
+      exit(EXIT_FAILURE);
     }
-    for (int i{0}; i < int(kNodeFinal.size()); ++i) {
-      if (i == 0) {
-        switch (kNodeFinal[i]) {
-          case '1':
-          case '2':
-          case '3':
-          case '4':
-          case '5':
-          case '6':
-          case '7':
-          case '8':
-          case '9':
-            break;
-
-          default:
-            cerr << "\nDebe introducir un número entero como nodo final";
-            cerr << "\ny sin ceros a la izquierda del todo para que el";
-            cerr << "\nprograma lo acepte\n\n";
-            exit(EXIT_FAILURE);
-            break;
-        }
-        continue;
-      }
-
-      switch (kNodeFinal[i]) {
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-          break;
-
-        default:
-          cerr << "\nDebe introducir un número entero como nodo final";
-          cerr << "\ny sin ceros a la izquierda del todo para que el";
-          cerr << "\nprograma lo acepte\n\n";
-          exit(EXIT_FAILURE);
-          break;
-      }
+    if (!std::regex_match(kNodeFinal, pattern_nodes)) {
+      cerr << "\nError, el nodo final debe ser un número positivo mayor ";
+      cerr << "que cero\nIntentelo de nuevo\n\n";
+      exit(EXIT_FAILURE);
     }
-    
+
+    std::string aux_number_nodes{""};
+    std::getline(input_file, aux_number_nodes);
+    if (!(std::stoi(aux_number_nodes) >= std::stoi(kNodeInitial) &&
+        std::stoi(aux_number_nodes) >= std::stoi(kNodeFinal))) {
+      cerr << "\nLos nodos inicial y final del recorrido tienen que ser nodos";
+      cerr << "\nválidos y existentes en el grafo, no puedes pasarle al";
+      cerr << "\nprograma un número positivo mayor a la cantidad de nodos del";
+      cerr << "\ngrafo porque ese número no se corresponde con ningún nodo";
+      cerr << "\ndel grafo, cambie el número que le está dando problemas";
+      cerr << "\ny intentelo de nuevo\n\n";
+      exit(EXIT_FAILURE);
+    }
+
   } else {
     MainMessage(kProgramName, kHelp);
     exit(EXIT_SUCCESS);
