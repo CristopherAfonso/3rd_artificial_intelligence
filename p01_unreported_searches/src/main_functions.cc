@@ -138,7 +138,7 @@ void CheckingGraphFile(std::ifstream& input_file) {
     if (aux_first_line) {
       aux_first_line = false;
       if (!std::regex_match(aux_actual_line,
-                            std::regex("^\\s*[2-9][0-9]*\\s*$"))) {
+                            std::regex("^\\s*([2-9]|[1-9][0-9]*)\\s*$"))) {
         cerr << "\nLa primera línea del archivo que contiene el grafo, debe";
         cerr << "\ntener un número entero positivo (sin el signo '+') mayor";
         cerr << "\no igual a 2, y además debe estar únicamente ese número en";
@@ -151,8 +151,9 @@ void CheckingGraphFile(std::ifstream& input_file) {
       }
       continue;
     }
-    if (!std::regex_match(aux_actual_line,
-                          std::regex("^\\s*(-1|[0-9]+)\\s*$"))) {
+    if (!std::regex_match(
+            aux_actual_line,
+            std::regex("^\\s*(-1(\\.0+)?|[0-9]+(\\.[0-9]+)?)\\s*$"))) {
       cerr << "\nHay líneas dentro del archivo que no se ciñen a la sintaxis";
       cerr << "\nrequerida, recuerde que por cada línea debe haber o un";
       cerr << "\nun número entero positivo sin el signo \"+\" o un cero si el";
@@ -216,12 +217,12 @@ void Usage(const int& argc, char* argv[]) {
       cerr << "que cero\nIntentelo de nuevo\n\n";
       exit(EXIT_FAILURE);
     }
-    
+
     std::string aux_number_nodes{""};
-    input_file.seekg(0, std::ios::beg); ///< Volvemos al inicio del archivo
+    input_file.seekg(0, std::ios::beg);  ///< Volvemos al inicio del archivo
     std::getline(input_file, aux_number_nodes);
     if (!(std::stoi(aux_number_nodes) >= std::stoi(kNodeInitial) &&
-        std::stoi(aux_number_nodes) >= std::stoi(kNodeFinal))) {
+          std::stoi(aux_number_nodes) >= std::stoi(kNodeFinal))) {
       cerr << "\nLos nodos inicial y final del recorrido tienen que ser nodos";
       cerr << "\nválidos y existentes en el grafo, no puedes pasarle al";
       cerr << "\nprograma un número positivo mayor a la cantidad de nodos del";
@@ -229,6 +230,14 @@ void Usage(const int& argc, char* argv[]) {
       cerr << "\ndel grafo, cambie el número que le está dando problemas";
       cerr << "\ny intentelo de nuevo\n\n";
       exit(EXIT_FAILURE);
+    }
+    if (std::stoi(kNodeInitial) == std::stoi(kNodeFinal)) {
+      cout << "\nPartiendo del nodo " << kNodeInitial << ", el camino más";
+      cout << "óptimo para llegar al nodo " << kNodeFinal << ", es el ";
+      cout << "que tiene coste\ncero, es decir, ninguno, porque ya nos ";
+      cout << "hallamos en el nodo objetivo, el nodo de partida";
+      cout << "\nes el nodo objetivo\n\n";
+      exit(EXIT_SUCCESS);
     }
     input_file.close();
   } else {
