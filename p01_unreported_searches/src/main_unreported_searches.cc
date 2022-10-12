@@ -39,6 +39,6 @@
 
 int main(int argc, char* argv[]) {
   Usage(argc, argv);
-  std::cout << "Hello Easy C++ project!" << std::endl;
+  std::cout << "Funciona! :)" << std::endl;
   return 0;
 }

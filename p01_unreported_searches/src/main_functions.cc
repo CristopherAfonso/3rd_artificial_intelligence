@@ -166,7 +166,7 @@ void CheckingGraphFile(std::ifstream& input_file) {
   }
   if (aux_number_of_lines_to_read != 0) {
     cerr << "\nError al leer el archivo, hay líneas vacías en el archivo que";
-    cerr << "\ndeberían tener un valor o coste positivo o un cero,o un";
+    cerr << "\ndeberían tener un valor o coste positivo o un cero, o un";
     cerr << "\n\"-1\", pero no deberían estar vacías, rellene las líneas que";
     cerr << "\nfaltan si quiere que se acepte el archivo con el grafo\n\n";
     exit(EXIT_FAILURE);
@@ -216,8 +216,9 @@ void Usage(const int& argc, char* argv[]) {
       cerr << "que cero\nIntentelo de nuevo\n\n";
       exit(EXIT_FAILURE);
     }
-
+    
     std::string aux_number_nodes{""};
+    input_file.seekg(0, std::ios::beg); ///< Volvemos al inicio del archivo
     std::getline(input_file, aux_number_nodes);
     if (!(std::stoi(aux_number_nodes) >= std::stoi(kNodeInitial) &&
         std::stoi(aux_number_nodes) >= std::stoi(kNodeFinal))) {
@@ -229,7 +230,7 @@ void Usage(const int& argc, char* argv[]) {
       cerr << "\ny intentelo de nuevo\n\n";
       exit(EXIT_FAILURE);
     }
-
+    input_file.close();
   } else {
     MainMessage(kProgramName, kHelp);
     exit(EXIT_SUCCESS);
