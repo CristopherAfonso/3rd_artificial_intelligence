@@ -1,4 +1,4 @@
-/**
+/** 
  * Universidad de La Laguna (ULL)
  * Escuela Superior de Ingenieria y Tecnologia (ESIT)
  * Grado en Ingenieria Informatica
@@ -8,35 +8,38 @@
  * @author Cristopher Manuel Afonso Mora
  * Correo: alu0101402031@ull.edu.es
  * @date 09/10/2022 (dd/mm/yyyy)
- *
- * @file main_functions.h
- * @brief Donde se aloja la declaración de las funciones del archivo cliente
- * de nuestro programa.
+ * 
+ * @file Graph.h 
+ * @brief Donde se aloja la declaración de la clase Graph y la declaracion
+ * de sus metodos. La clase Graph es una clase que implementa un grafo, uno
+ * que es NO DIRIGIDO, y con costes positivos o iguales a cero. Esta clase
+ * implementa el grafo y permite operar con los nodos que hay en él.
  *
  * @bug No hay bugs conocidos
- *
+ * 
  * Referencias: Enlaces de Interes
- * @see
- *
+ * @see 
+ * 
  * @version 1.0
- * @brief Historial de Revisiones
+ * @brief Historial de Revisiones 
  * 09/10/22 - Creacion (primera version) del codigo:
  *            Solo he creado el archivo, le he puesto el comentario de
  *            cabecera y declarado los #include necesarios.
  * 09/10/22 - Archivo terminado.
  */
 
-#include <fstream>
-#include <iostream>
-#include <regex>
-#include <string>
+#ifndef _GRAPH_
+#define _GRAPH_
+
 #include <vector>
 
-#include "Graph.h"
+#include "Node.h"
 
-void MainMessage(const std::string& kProgramName, const std::string& kHelp);
-void HelpMessage(const std::string& kProgramName, const std::string& kHelp);
-void WrongNumberOfArguments(const std::string& kProgramName,
-                            const std::string& kHelp);
-void CheckingGraphFile(std::ifstream& input_file);
-void Usage(const int& argc, char* argv[]);
+class Graph {
+ public:
+  
+ private:
+  
+};
+
+#endif
