@@ -26,6 +26,7 @@
  * 09/10/22 - Archivo terminado.
  */
 
+#include <forward_list>
 #include <fstream>
 #include <iostream>
 #include <regex>
@@ -38,3 +39,6 @@ void WrongNumberOfArguments(const std::string& kProgramName,
                             const std::string& kHelp);
 void CheckingGraphFile(std::ifstream& input_file);
 void Usage(const int& argc, char* argv[]);
+void SearchInAmplitude(const std::string& input_file,
+                       const std::string& kNodeInitial,
+                       const std::string& kNodeFinal);

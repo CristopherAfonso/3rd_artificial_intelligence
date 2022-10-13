@@ -245,3 +245,26 @@ void Usage(const int& argc, char* argv[]) {
     exit(EXIT_SUCCESS);
   }
 }
+
+/**
+ * @brief Función que coge el nombre de un archivo de texto y dos números, los
+ * tres están en tipo de dato std::string, abre el archivo de texto y encuentra
+ * el camino óptimo entre los dos nodos especificados y lo muestra por pantalla
+ *
+ * @param input_file nombre del archivo de texto que contiene el grafo
+ * @param kNodeInitial nodo de partida, donde empezamos la búsqueda
+ * @param kNodeFinal nodo objetivo, es el nodo a donde queremos llegar
+ */
+void SearchInAmplitude(const std::string& input_file,
+                       const std::string& kInitial, const std::string& kFinal) {
+  const int kNodeInitial{std::stoi(kInitial)};
+  const int kNodeFinal{std::stoi(kFinal)};
+  std::ifstream graph_file;
+  graph_file.open(input_file, std::ios::in);
+  /// Cada posición del vector hace referencia a un nodo de partida, y cada
+  /// posición contiene una lista con los nodos a los que se puede llegar
+  /// desde el nodo de partida que referencia la posición, y el coste
+  /// necesario para llegar a ese nodo
+  std::vector<std::forward_list<std::pair<int, double>>> node_costs;
+  
+}
