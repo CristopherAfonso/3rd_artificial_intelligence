@@ -32,8 +32,6 @@
 #include <string>
 #include <vector>
 
-#include "Graph.h"
-
 void MainMessage(const std::string& kProgramName, const std::string& kHelp);
 void HelpMessage(const std::string& kProgramName, const std::string& kHelp);
 void WrongNumberOfArguments(const std::string& kProgramName,
