@@ -41,6 +41,6 @@ void CheckingGraphFile(std::ifstream& input_file);
 void Usage(const int& argc, char* argv[]);
 void ShowGraph(
     const std::vector<std::forward_list<std::pair<int, double>>> kNodeCosts);
-void SearchInAmplitude(const std::string& input_file,
+void UniformCostSearch(const std::string& input_file,
                        const std::string& kNodeInitial,
                        const std::string& kNodeFinal);

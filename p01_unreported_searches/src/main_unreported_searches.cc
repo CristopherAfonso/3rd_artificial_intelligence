@@ -42,6 +42,6 @@ int main(int argc, char* argv[]) {
   std::string kNameFile{argv[1]};
   std::string kNodeInitial{argv[2]};
   std::string kNodeFinal{argv[3]};
-  SearchInAmplitude(kNameFile, kNodeInitial, kNodeFinal);
+  UniformCostSearch(kNameFile, kNodeInitial, kNodeFinal);
   return 0;
 }

@@ -275,10 +275,11 @@ void ShowGraph(
  * @param kNodeInitial nodo de partida, donde empezamos la búsqueda
  * @param kNodeFinal nodo objetivo, es el nodo a donde queremos llegar
  */
-void SearchInAmplitude(const std::string& input_file,
+void UniformCostSearch(const std::string& input_file,
                        const std::string& kInitial, const std::string& kFinal) {
   const int kNodeInitial{std::stoi(kInitial)};
   const int kNodeFinal{std::stoi(kFinal)};
+  int edges{0}; ///< cuenta las aristas
   std::ifstream graph_file;
   graph_file.open(input_file, std::ios::in);
   /// Cada posición del vector hace referencia a un nodo de partida, y cada
@@ -298,10 +299,16 @@ void SearchInAmplitude(const std::string& input_file,
       } else {
         node_costs[i].emplace_front(j, aux_double);
         node_costs[j].emplace_front(i, aux_double);
+        ++edges;
       }
     }
   }
   /// Le damos la vuelta los elementos de la lista, están al revés
   for (int i{0}; i < std::stoi(aux_string); ++i) node_costs[i].reverse();
-  ShowGraph(node_costs);
+  /// ShowGraph(node_costs); ///< Descomentar si se quiere visualizar el grafo
+  cout << "\nNodos del Grafo: " << node_costs.size();
+  cout << "\nAristas del Grafo: " << edges;
+  cout << "\nNodo Inicial: " << kNodeInitial;
+  cout << "\nNodo Final: " << kNodeFinal;
+  cout << "\n\n";
 }
