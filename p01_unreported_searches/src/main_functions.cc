@@ -247,6 +247,26 @@ void Usage(const int& argc, char* argv[]) {
 }
 
 /**
+ * @brief Función que permite visualizar por pantalla el grafo que tenemos
+ * guardado en la variable que le pasamos a la función, esta función
+ * especifica el nodo del que se parte, y a la derecha en una misma línea
+ * cuando se está mostrando por pantalla, se especifica los nodos a los que se
+ * puede llegar, y entre paréntesis, el coste necesario.
+ *
+ * @param kNodeCosts Variable que contiene almacenado el grafo a querer mostrar
+ */
+void ShowGraph(
+    const std::vector<std::forward_list<std::pair<int, double>>> kNodeCosts) {
+  for (int i{0}; i < int(kNodeCosts.size()); ++i) {
+    cout << "\nNodo " << (i + 1) << ": ";
+    for (auto& pos_list : kNodeCosts[i]) {
+      cout << (pos_list.first + 1) << "(" << pos_list.second << ") ";
+    }
+  }
+  cout << std::endl << std::endl;
+}
+
+/**
  * @brief Función que coge el nombre de un archivo de texto y dos números, los
  * tres están en tipo de dato std::string, abre el archivo de texto y encuentra
  * el camino óptimo entre los dos nodos especificados y lo muestra por pantalla
@@ -266,5 +286,22 @@ void SearchInAmplitude(const std::string& input_file,
   /// desde el nodo de partida que referencia la posición, y el coste
   /// necesario para llegar a ese nodo
   std::vector<std::forward_list<std::pair<int, double>>> node_costs;
-  
+  std::string aux_string{""};
+  double aux_double{0.00};
+  std::getline(graph_file, aux_string);
+  node_costs.resize(std::stoi(aux_string));
+  for (int i{0}; i < (std::stoi(aux_string) - 1); ++i) {
+    for (int j{1 + i}; j < std::stoi(aux_string); ++j) {
+      graph_file >> (double&)aux_double;
+      if (aux_double == -1.00) {
+        continue;
+      } else {
+        node_costs[i].emplace_front(j, aux_double);
+        node_costs[j].emplace_front(i, aux_double);
+      }
+    }
+  }
+  /// Le damos la vuelta los elementos de la lista, están al revés
+  for (int i{0}; i < std::stoi(aux_string); ++i) node_costs[i].reverse();
+  ShowGraph(node_costs);
 }
