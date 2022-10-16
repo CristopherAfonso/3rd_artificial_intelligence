@@ -305,7 +305,7 @@ void UniformCostSearch(const std::string& input_file,
   }
   /// Le damos la vuelta los elementos de la lista, están al revés
   for (int i{0}; i < std::stoi(aux_string); ++i) node_costs[i].reverse();
-  ShowGraph(node_costs);  ///< Descomentar si se quiere visualizar el grafo
+  ///< ShowGraph(node_costs);  ///< Descomentar si se quiere visualizar el grafo
 
   std::forward_list<int> opt_way;
   double distance{0.00};
@@ -335,7 +335,7 @@ void UniformCostSearch(const std::string& input_file,
         actual_node = i.second.first;
         continue;
       }
-      if (actual_lower_cost > i.second.second) {
+      if (actual_lower_cost >= i.second.second) {
         actual_lower_cost = i.second.second;
         actual_node = i.second.first;
       }
@@ -344,8 +344,8 @@ void UniformCostSearch(const std::string& input_file,
   visited[actual_node] = true;  ///< Marcamos el nodo final como visitado
   ++count_visited;
 
-  distance = actual_lower_cost; ///< guardamos el coste final
-  while (actual_node != -1) { ///< -1 es el nodo que generó el nodo inicial
+  distance = actual_lower_cost;  ///< guardamos el coste final
+  while (actual_node != -1) {    ///< -1 es el nodo que generó el nodo inicial
     opt_way.emplace_front(actual_node + 1);
     int aux_node{actual_node};
     for (auto& i : accumulative_costs) {
@@ -357,7 +357,6 @@ void UniformCostSearch(const std::string& input_file,
       }
     }
   }
-  //opt_way.reverse(); ///< así ordenamos el camino que lo metimos al revés
 
   cout << "\nNodos del Grafo: " << node_costs.size();
   cout << "\nAristas del Grafo: " << edges;

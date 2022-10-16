@@ -7,7 +7,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/bin/unreported_searches",
             "preLaunchTask": "Build C++ project",
-            "args": ["./ficheros_con_grafos/grafo_aula3.txt", "5", "15"],
+            "args": ["./ficheros_con_grafos/grafo_aula1.txt", "11", "1"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
