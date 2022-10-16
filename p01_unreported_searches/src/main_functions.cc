@@ -138,7 +138,7 @@ void CheckingGraphFile(std::ifstream& input_file) {
     if (aux_first_line) {
       aux_first_line = false;
       if (!std::regex_match(aux_actual_line,
-                            std::regex("^\\s*([2-9]|[1-9][0-9]*)\\s*$"))) {
+                            std::regex("^\\s*([2-9]|[1-9][0-9]+)\\s*$"))) {
         cerr << "\nLa primera línea del archivo que contiene el grafo, debe";
         cerr << "\ntener un número entero positivo (sin el signo '+') mayor";
         cerr << "\no igual a 2, y además debe estar únicamente ese número en";
@@ -277,9 +277,9 @@ void ShowGraph(
  */
 void UniformCostSearch(const std::string& input_file,
                        const std::string& kInitial, const std::string& kFinal) {
-  const int kNodeInitial{std::stoi(kInitial)};
-  const int kNodeFinal{std::stoi(kFinal)};
-  int edges{0}; ///< cuenta las aristas
+  const int kNodeInitial{std::stoi(kInitial) - 1};
+  const int kNodeFinal{std::stoi(kFinal) - 1};
+  int edges{0};  ///< cuenta las aristas
   std::ifstream graph_file;
   graph_file.open(input_file, std::ios::in);
   /// Cada posición del vector hace referencia a un nodo de partida, y cada
@@ -305,10 +305,71 @@ void UniformCostSearch(const std::string& input_file,
   }
   /// Le damos la vuelta los elementos de la lista, están al revés
   for (int i{0}; i < std::stoi(aux_string); ++i) node_costs[i].reverse();
-  /// ShowGraph(node_costs); ///< Descomentar si se quiere visualizar el grafo
+  ShowGraph(node_costs);  ///< Descomentar si se quiere visualizar el grafo
+
+  std::forward_list<int> opt_way;
+  double distance{0.00};
+  int generated_nodes{1};
+  int count_visited{0};
+
+  std::vector<bool> visited(node_costs.size(), false);
+  std::vector<std::pair<int, std::pair<int, double>>> accumulative_costs{
+      std::make_pair(-1, std::make_pair(kNodeInitial, 0.00))};
+  int actual_node{kNodeInitial};
+  double actual_lower_cost{0.00};
+
+  while (actual_node != kNodeFinal) {
+    visited[actual_node] = true;
+    ++count_visited;
+    for (auto& i : node_costs[actual_node]) {
+      accumulative_costs.emplace_back(
+          actual_node, std::make_pair(i.first, i.second + actual_lower_cost));
+      ++generated_nodes;
+    }
+    bool assigned_first_cost{false};
+    for (auto i : accumulative_costs) {
+      if (visited[i.second.first]) continue;
+      if (!assigned_first_cost) {
+        assigned_first_cost = true;
+        actual_lower_cost = i.second.second;
+        actual_node = i.second.first;
+        continue;
+      }
+      if (actual_lower_cost > i.second.second) {
+        actual_lower_cost = i.second.second;
+        actual_node = i.second.first;
+      }
+    }
+  }
+  visited[actual_node] = true;  ///< Marcamos el nodo final como visitado
+  ++count_visited;
+
+  distance = actual_lower_cost; ///< guardamos el coste final
+  while (actual_node != -1) { ///< -1 es el nodo que generó el nodo inicial
+    opt_way.emplace_front(actual_node + 1);
+    int aux_node{actual_node};
+    for (auto& i : accumulative_costs) {
+      if (aux_node != i.second.first) continue;
+      if (actual_lower_cost >= i.second.second) {
+        actual_lower_cost = i.second.second;
+        actual_node = i.first;
+        continue;
+      }
+    }
+  }
+  //opt_way.reverse(); ///< así ordenamos el camino que lo metimos al revés
+
   cout << "\nNodos del Grafo: " << node_costs.size();
   cout << "\nAristas del Grafo: " << edges;
-  cout << "\nNodo Inicial: " << kNodeInitial;
-  cout << "\nNodo Final: " << kNodeFinal;
+  cout << "\nNodo Inicial: " << kInitial;
+  cout << "\nNodo Final: " << kFinal;
+  cout << "\nCamino óptimo: ";
+  for (auto& i : opt_way) {
+    cout << i << " ";
+  }
+  cout << "\nDistancia: " << distance;
+  cout << "\nNodos Generados: " << generated_nodes;
+  cout << "\nNodos Visitados: " << count_visited;
+
   cout << "\n\n";
 }
