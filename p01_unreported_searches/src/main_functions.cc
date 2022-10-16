@@ -325,7 +325,7 @@ void UniformCostSearch(const std::string& input_file,
           actual_node, std::make_pair(i.first, i.second + actual_lower_cost));
       ++generated_nodes;
     }
-    --generated_nodes;
+    --generated_nodes; ///< quitamos el nodo padre generado de nuevo
     bool assigned_first_cost{false};
     for (auto i : accumulative_costs) {
       if (visited[i.second.first]) continue;
